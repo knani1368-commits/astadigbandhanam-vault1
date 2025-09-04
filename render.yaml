@@ -2,10 +2,10 @@ services:
   # Backend API Service
   - type: web
     name: astadigbandhanam-vault1-backend
-    env: docker
+    env: node
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 3001
       - key: MONGODB_URI
-        value: mongodb+srv://astadigbandhanam_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/astadigbandhanam?retryWrites=true&w=majority
+        value: mongodb+srv://astadigbandhanam_user:Mohan1997@cluster0.inmmhau.mongodb.net/astadigbandhanam?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
         value: astadigbandhanam-jwt-secret-2024-production-key-min-32-chars
       - key: JWT_EXPIRES_IN
@@ -23,13 +23,18 @@ services:
       - key: CORS_ORIGIN
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
-  # Frontend Service
-  - type: web
+  # Frontend Service (recreate this)
+  - type: static_site
     name: astadigbandhanam-vault1-frontend
-    env: docker
-    plan: free
-    dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend
+    buildCommand: cd frontend && npm install && npm run build
+    publishPath: ./frontend/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
     envVars:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
