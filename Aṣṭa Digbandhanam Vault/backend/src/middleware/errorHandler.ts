@@ -1,102 +1,51 @@
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger';
 
-/**
- * Custom error class for application-specific errors
- */
 export class AppError extends Error {
   public statusCode: number;
   public isOperational: boolean;
-  public code?: string;
 
-  constructor(message: string, statusCode: number, code?: string) {
+  constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = true;
-    this.code = code;
 
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-/**
- * Global error handling middleware
- * Handles different types of errors and provides appropriate responses
- */
 export const errorHandler = (
-  error: Error | AppError,
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  let statusCode = 500;
-  let message = 'Internal Server Error';
-  let code = 'INTERNAL_ERROR';
+  let error = { ...err };
+  error.message = err.message;
 
-  // Handle different error types
-  if (error instanceof AppError) {
-    statusCode = error.statusCode;
-    message = error.message;
-    code = error.code || 'APP_ERROR';
-  } else if (error.name === 'ValidationError') {
-    statusCode = 400;
-    message = 'Validation Error';
-    code = 'VALIDATION_ERROR';
-  } else if (error.name === 'CastError') {
-    statusCode = 400;
-    message = 'Invalid ID format';
-    code = 'INVALID_ID';
-  } else if (error.name === 'MongoError' && (error as any).code === 11000) {
-    statusCode = 409;
-    message = 'Duplicate field value';
-    code = 'DUPLICATE_ERROR';
-  } else if (error.name === 'JsonWebTokenError') {
-    statusCode = 401;
-    message = 'Invalid token';
-    code = 'INVALID_TOKEN';
-  } else if (error.name === 'TokenExpiredError') {
-    statusCode = 401;
-    message = 'Token expired';
-    code = 'TOKEN_EXPIRED';
+  // Log error
+  console.error(err);
+
+  // Mongoose bad ObjectId
+  if (err.name === 'CastError') {
+    const message = 'Resource not found';
+    error = new AppError(message, 404);
   }
 
-  // Log error details
-  logger.error('Error occurred:', {
-    error: error.message,
-    stack: error.stack,
-    url: req.url,
-    method: req.method,
-    ip: req.ip,
-    userAgent: req.get('User-Agent'),
-    statusCode,
-    code,
-  });
+  // Mongoose duplicate key
+  if (err.name === 'MongoError' && (err as any).code === 11000) {
+    const message = 'Duplicate field value entered';
+    error = new AppError(message, 400);
+  }
 
-  // Send error response
-  res.status(statusCode).json({
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    const message = Object.values((err as any).errors).map((val: any) => val.message).join(', ');
+    error = new AppError(message, 400);
+  }
+
+  res.status((error as AppError).statusCode || 500).json({
     success: false,
-    message,
-    code,
-    ...(process.env.NODE_ENV === 'development' && {
-      stack: error.stack,
-      details: error,
-    }),
+    error: (error as AppError).message || 'Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
-};
-
-/**
- * Async error wrapper to catch async errors
- */
-export const asyncHandler = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
-
-/**
- * 404 handler for undefined routes
- */
-export const notFound = (req: Request, res: Response, next: NextFunction) => {
-  const error = new AppError(`Route ${req.originalUrl} not found`, 404, 'ROUTE_NOT_FOUND');
-  next(error);
 };
