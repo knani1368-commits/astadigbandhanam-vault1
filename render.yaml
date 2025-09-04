@@ -24,7 +24,8 @@ services:
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
   # Frontend Service
-  - type: static
+- type: web
+  env: static
     name: astadigbandhanam-vault1-frontend
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
@@ -39,4 +40,5 @@ services:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
       - key: VITE_APP_NAME
+
         value: Aṣṭa Digbandhanam Vault
