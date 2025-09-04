@@ -2,7 +2,7 @@ services:
   - type: web
     name: astadigbandhanam-vault1-backend
     runtime: node
-    plan: free
+    plan: starter   # must be starter or higher
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
     healthCheckPath: /health
@@ -25,7 +25,7 @@ services:
   - type: web
     name: astadigbandhanam-vault1-frontend
     runtime: static
-    plan: free
+    plan: free   # static sites can use free tier
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
     headers:
