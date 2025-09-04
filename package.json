@@ -1,0 +1,36 @@
+{
+  "name": "astadigbandhanam-vault",
+  "version": "1.0.0",
+  "description": "A production-ready password manager inspired by Aṣṭa Digbandhanam (eight-directional protection)",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd backend && npm run dev",
+    "dev:client": "cd frontend && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd backend && npm run build",
+    "build:client": "cd frontend && npm run build",
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd backend && npm test",
+    "test:client": "cd frontend && npm test",
+    "start": "cd backend && npm start",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": [
+    "password-manager",
+    "security",
+    "encryption",
+    "astadigbandhanam",
+    "vault",
+    "typescript",
+    "react",
+    "nodejs"
+  ],
+  "author": "Senior Full-Stack Architect",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

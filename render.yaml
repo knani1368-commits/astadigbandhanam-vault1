@@ -1,0 +1,35 @@
+services:
+  # Backend API Service
+  - type: web
+    name: astadigbandhanam-vault1-backend
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: MONGODB_URI
+        value: mongodb+srv://astadigbandhanam_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/astadigbandhanam?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        value: astadigbandhanam-jwt-secret-2024-production-key-min-32-chars
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ENCRYPTION_KEY
+        value: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+      - key: CORS_ORIGIN
+        value: https://astadigbandhanam-vault1-frontend.onrender.com
+
+  # Frontend Service
+  - type: static
+    name: astadigbandhanam-vault1-frontend
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://astadigbandhanam-vault1-backend.onrender.com/api
+      - key: VITE_APP_NAME
+        value: Aṣṭa Digbandhanam Vault
