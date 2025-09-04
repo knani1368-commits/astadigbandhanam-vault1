@@ -1,5 +1,4 @@
 services:
-  # Backend API Service
   - type: web
     name: astadigbandhanam-vault1-backend
     runtime: node
@@ -23,8 +22,7 @@ services:
       - key: CORS_ORIGIN
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
-  # Frontend Static Site Service
-   - type: web
+  - type: web
     name: astadigbandhanam-vault1-frontend
     runtime: static
     plan: free
