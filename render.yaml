@@ -2,7 +2,7 @@ services:
   # Backend API Service
   - type: web
     name: astadigbandhanam-vault1-backend
-    env: node
+    runtime: node
     plan: free
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
@@ -11,21 +11,23 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3001
+        value: "3001"
       - key: MONGODB_URI
-        value: mongodb+srv://astadigbandhanam_user:Mohan1997@cluster0.inmmhau.mongodb.net/astadigbandhanam?retryWrites=true&w=majority&appName=Cluster0
+        value: <your-mongodb-uri>
       - key: JWT_SECRET
-        value: astadigbandhanam-jwt-secret-2024-production-key-min-32-chars
+        value: <your-jwt-secret>
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: ENCRYPTION_KEY
-        value: a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+        value: <your-encryption-key>
       - key: CORS_ORIGIN
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
-  # Frontend Service (recreate this)
-  - type: static_site
+  # Frontend Static Site Service
+  - type: web
     name: astadigbandhanam-vault1-frontend
+    runtime: static
+    plan: free
     buildCommand: cd frontend && npm install && npm run build
     publishPath: ./frontend/dist
     headers:
@@ -39,4 +41,4 @@ services:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
       - key: VITE_APP_NAME
-        value: Aṣṭa Digbandhanam Vault
+        value: "Aṣṭa Digbandhanam Vault"
