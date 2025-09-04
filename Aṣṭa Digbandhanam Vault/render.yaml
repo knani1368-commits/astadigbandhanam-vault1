@@ -2,10 +2,10 @@ services:
   # Backend API Service
   - type: web
     name: astadigbandhanam-vault1-backend
-    env: docker
+    env: node
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -27,7 +27,7 @@ services:
   - type: static
     name: astadigbandhanam-vault1-frontend
     buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
+    staticPublishPath: frontend/dist
     headers:
       - path: /*
         name: X-Frame-Options
