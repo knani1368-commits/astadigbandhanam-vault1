@@ -1,0 +1,51 @@
+services:
+  # Backend API Service
+  - type: web
+    name: astadigbandhanam-vault1-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: MONGODB_URI
+        value: mongodb+srv://astadigbandhanam_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/astadigbandhanam?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: astadigbandhanam-vault1-redis
+          property: connectionString
+      - key: CORS_ORIGIN
+        value: https://astadigbandhanam-vault1-frontend.onrender.com
+
+  # Frontend Service
+  - type: web
+    name: astadigbandhanam-vault1-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://astadigbandhanam-vault1-backend.onrender.com/api
+      - key: VITE_APP_NAME
+        value: Aṣṭa Digbandhanam Vault
+
+  # Redis Service
+  - type: redis
+    name: astadigbandhanam-vault1-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  - name: astadigbandhanam-vault1-db
+    databaseName: astadigbandhanam
+    user: astadigbandhanam_user

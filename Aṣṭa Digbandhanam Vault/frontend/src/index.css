@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  }
+  
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600;
+  }
+  
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+  
+  .input {
+    @apply block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white;
+  }
+  
+  .input-error {
+    @apply input border-red-300 focus:ring-red-500 dark:border-red-600;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+  }
+  
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700;
+  }
+  
+  .card-body {
+    @apply px-6 py-4;
+  }
+  
+  .card-footer {
+    @apply px-6 py-4 border-t border-gray-200 dark:border-gray-700;
+  }
+  
+  .mandala-direction {
+    @apply relative w-16 h-16 rounded-full flex items-center justify-center text-white font-semibold text-sm transition-all duration-300 cursor-pointer;
+  }
+  
+  .mandala-direction.enabled {
+    @apply shadow-lg transform scale-110;
+  }
+  
+  .mandala-direction.disabled {
+    @apply opacity-50 hover:opacity-75;
+  }
+  
+  .mandala-center {
+    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-lg shadow-xl;
+  }
+  
+  .security-score {
+    @apply text-3xl font-bold bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent;
+  }
+  
+  .vault-item {
+    @apply card hover:shadow-md transition-shadow duration-200 cursor-pointer;
+  }
+  
+  .vault-item-header {
+    @apply flex items-center justify-between;
+  }
+  
+  .vault-item-icon {
+    @apply w-8 h-8 rounded-lg flex items-center justify-center text-white;
+  }
+  
+  .vault-item-content {
+    @apply mt-2;
+  }
+  
+  .vault-item-title {
+    @apply font-semibold text-gray-900 dark:text-gray-100;
+  }
+  
+  .vault-item-subtitle {
+    @apply text-sm text-gray-500 dark:text-gray-400;
+  }
+  
+  .vault-item-tags {
+    @apply flex flex-wrap gap-1 mt-2;
+  }
+  
+  .vault-item-tag {
+    @apply px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full;
+  }
+  
+  .loading-spinner {
+    @apply animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600;
+  }
+  
+  .error-message {
+    @apply text-sm text-red-600 dark:text-red-400;
+  }
+  
+  .success-message {
+    @apply text-sm text-green-600 dark:text-green-400;
+  }
+  
+  .warning-message {
+    @apply text-sm text-yellow-600 dark:text-yellow-400;
+  }
+  
+  .info-message {
+    @apply text-sm text-blue-600 dark:text-blue-400;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .glow-effect {
+    @apply shadow-lg shadow-primary-500/25;
+  }
+}
