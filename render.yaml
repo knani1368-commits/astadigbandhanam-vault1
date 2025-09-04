@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 3001
       - key: MONGODB_URI
-        value: mongodb+srv://astadigbandhanam_user:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/astadigbandhanam?retryWrites=true&w=majority
+        value: mongodb+srv://astadigbandhanam_user:Mohan1997@cluster0.inmmhau.mongodb.net/astadigbandhanam?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
         value: astadigbandhanam-jwt-secret-2024-production-key-min-32-chars
       - key: JWT_EXPIRES_IN
@@ -32,4 +32,5 @@ services:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
       - key: VITE_APP_NAME
+
         value: Aṣṭa Digbandhanam Vault
