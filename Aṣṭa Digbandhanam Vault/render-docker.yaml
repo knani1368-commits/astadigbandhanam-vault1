@@ -6,7 +6,6 @@ services:
     plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
@@ -24,12 +23,10 @@ services:
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
   # Frontend Service
-  - type: web
+  - type: static
     name: astadigbandhanam-vault1-frontend
-    env: docker
-    plan: free
-    dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
