@@ -23,10 +23,10 @@ services:
       - key: CORS_ORIGIN
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
-  # Frontend Service
-- type: web
-  env: static
+  # Frontend Static Site
+  - type: web
     name: astadigbandhanam-vault1-frontend
+    env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
     headers:
@@ -40,5 +40,4 @@ services:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
       - key: VITE_APP_NAME
-
         value: Aṣṭa Digbandhanam Vault
