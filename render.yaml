@@ -2,10 +2,10 @@ services:
   # Backend API Service
   - type: web
     name: astadigbandhanam-vault1-backend
-    env: docker
+    env: node
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -28,9 +28,15 @@ services:
     name: astadigbandhanam-vault1-frontend
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
     envVars:
       - key: VITE_API_URL
         value: https://astadigbandhanam-vault1-backend.onrender.com/api
       - key: VITE_APP_NAME
-
         value: Aṣṭa Digbandhanam Vault

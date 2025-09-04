@@ -3,18 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
-import hpp from 'hpp';
 import dotenv from 'dotenv';
-import { connectDB } from './config/database';
-import { logger } from './utils/logger';
-import { errorHandler } from './middleware/errorHandler';
-import { requestLogger } from './middleware/requestLogger';
-import authRoutes from './routes/auth';
-import vaultRoutes from './routes/vault';
-import securityRoutes from './routes/security';
-import userRoutes from './routes/user';
-import { swaggerSpec } from './config/swagger';
+import mongoose from 'mongoose';
 
 // Load environment variables
 dotenv.config();
@@ -23,52 +13,26 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
-    },
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+app.use(helmet());
+app.use(compression());
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true
 }));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Security middleware
-app.use(mongoSanitize());
-app.use(hpp());
-app.use(compression());
-
-// Request logging
-app.use(requestLogger);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -76,62 +40,61 @@ app.get('/health', (req, res) => {
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
-// API Documentation
-if (process.env.NODE_ENV !== 'production') {
-  const swaggerUi = require('swagger-ui-express');
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-}
+// API routes
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Aṣṭa Digbandhanam Password Manager API',
+    version: '1.0.0',
+    status: 'running'
+  });
+});
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/vault', vaultRoutes);
-app.use('/api/security', securityRoutes);
-app.use('/api/user', userRoutes);
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/astadigbandhanam';
+    await mongoose.connect(mongoURI);
+    console.log('✅ MongoDB connected successfully');
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+    process.exit(1);
+  }
+};
+
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Something went wrong!',
+    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  });
+});
 
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
-    success: false,
-    message: 'Route not found',
-    path: req.originalUrl,
+    error: 'Not Found',
+    message: 'The requested resource was not found'
   });
-});
-
-// Global error handler
-app.use(errorHandler);
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  process.exit(0);
 });
 
 // Start server
 const startServer = async () => {
   try {
-    // Connect to database
     await connectDB();
-    
     app.listen(PORT, () => {
-      logger.info(`🚀 Server running on port ${PORT}`);
-      logger.info(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-      logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔗 API endpoint: http://localhost:${PORT}/api`);
     });
   } catch (error) {
-    logger.error('Failed to start server:', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
 
 startServer();
-
-export default app;
