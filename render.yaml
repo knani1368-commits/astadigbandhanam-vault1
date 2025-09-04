@@ -24,12 +24,12 @@ services:
         value: https://astadigbandhanam-vault1-frontend.onrender.com
 
   # Frontend Static Site Service
-  - type: web
+   - type: web
     name: astadigbandhanam-vault1-frontend
     runtime: static
     plan: free
     buildCommand: cd frontend && npm install && npm run build
-    publishPath: ./frontend/dist
+    staticPublishPath: ./frontend/dist
     headers:
       - path: /*
         name: X-Frame-Options
